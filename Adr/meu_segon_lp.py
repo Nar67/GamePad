@@ -43,11 +43,9 @@ def check_if_out_of_bounds(x, y, YMIN, YMAX, XMIN, XMAX):
 class button_thread(Thread):
 
 	#def __init__(self, execute_lock, xcoord, ycoord, YMIN, YMAX, XMIN, XMAX, check, stop):
-	def __init__(self, launchpad, execute_lock, xcoord, ycoord, YMIN, YMAX, XMIN, XMAX, check, stop):
+	def __init__(self, launchpad, execute_lock, get_xcoord, get_ycoord, incrementa_x_y, YMIN, YMAX, XMIN, XMAX, check, stop):
 		super(button_thread, self).__init__()
 		self.el = execute_lock
-		self.xcoord = xcoord
-		self.ycoord = ycoord
 		self.YMIN = YMIN
 		self.YMAX = YMAX
 		self.XMIN = XMIN
@@ -56,6 +54,9 @@ class button_thread(Thread):
 		self.flag = 0
 		self.check_if_collide = check
 		self.stop = stop
+		self.getx = get_xcoord
+		self.gety = get_ycoord
+		self.incxy = incrementa_x_y
 
 
 	def stopt(self, signum, frame):
@@ -81,24 +82,24 @@ class button_thread(Thread):
 			self.el.release()
 
 			if(len(ll) != 0):
-				if ll[0] == 0 and ll[1] == 0 and self.ycoord > self.YMIN: # up
+				if ll[0] == 0 and ll[1] == 0 and self.get_ycoord() > self.YMIN: # up
 					self.el.acquire()
-					self.ycoord -= 1
+					self.incrementa_x_y(0, -1)
 					self.el.release()
 
-				elif ll[0] == 1 and ll[1] == 0 and self.ycoord < self.YMAX: #down
+				elif ll[0] == 1 and ll[1] == 0 and self.get_ycoord() < self.YMAX: #down
 					self.el.acquire()
-					self.ycoord += 1
+					self.incrementa_x_y(0, 1)
 					self.el.release()
 
-				elif ll[0] == 2 and ll[1] == 0 and self.xcoord > self.XMIN: # izquierda
+				elif ll[0] == 2 and ll[1] == 0 and self.get_xcoord() > self.XMIN: # izquierda
 					self.el.acquire()
-					self.xcoord -= 1
+					self.incrementa_x_y(-1, 0)
 					self.el.release()
 
-				elif ll[0] == 3 and ll[1] == 0 and self.xcoord < self.XMAX: # derecha
+				elif ll[0] == 3 and ll[1] == 0 and self.get_xcoord() < self.XMAX: # derecha
 					self.el.acquire()
-					self.xcoord += 1
+					self.incrementa_x_y(1, 0)
 					self.el.release()
 
 
@@ -146,10 +147,19 @@ class game:
 		self.flag_principal = 1
 		sys.exit()
 
+	def incrementa_x_y(self, inc_x, inc_y):
+		self.ycoord += inc_y
+		self.xcoord += inc_x
+
+	def get_xcoord(self):
+		return self.xcoord
+
+	def get_ycoord(self):
+		return self.ycoord
 
 	def start_game(self):
 		
-		thr1 = button_thread(self.lp, self.el, self.xcoord, self.ycoord, self.YMIN, self.YMAX, self.XMIN, self.XMAX, self.check_if_collide, self.stop_thread)
+		thr1 = button_thread(self.lp, self.el, self.get_xcoord, self.get_ycoord, self.incrementa_x_y, self.YMIN, self.YMAX, self.XMIN, self.XMAX, self.check_if_collide, self.stop_thread)
 		thr1.start()
 		signal.signal(signal.SIGINT, thr1.stopt)
 		signal.signal(signal.SIGTERM, thr1.stopt)
