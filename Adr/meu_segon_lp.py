@@ -144,6 +144,7 @@ class game:
 
 	def reset_variables(self, difficult):
 		self.multiply_despl = CONS_multiply_other
+		self.torns_gen = CONS_torns_gen_easy
 		if difficult == 0: #easy
 			self.torns_gen = CONS_torns_gen_easy
 			self.torns_changedir = CONS_torns_changedir_easy
@@ -267,9 +268,9 @@ class game:
 			self.lp.LedCtrlXYByCode(6, fila, CONS_colorhard)
 
 		self.lp.LedCtrlXYByCode(0, 0, CONS_colorchooser)
-		self.lp.LedCtrlXYByCode(0, 2, CONS_colorchooser)
-		self.lp.LedCtrlXYByCode(0, 4, CONS_colorchooser)
-		self.lp.LedCtrlXYByCode(0, 8, CONS_colorchooser)
+		self.lp.LedCtrlXYByCode(2, 0, CONS_colorchooser)
+		self.lp.LedCtrlXYByCode(4, 0, CONS_colorchooser)
+		self.lp.LedCtrlXYByCode(8, 0, CONS_colorchooser)
 		dificultat = -1
 		while dificultat == -1:
 			ll = self.lp.ButtonStateXY()
