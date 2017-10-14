@@ -70,6 +70,6 @@ while 1:
 		objects = objects + objs.get_obj_1(random.randint(XMIN, XMAX), random.randint(YMIN, YMAX))
 
 	lp.ButtonFlush()
-
+	time.sleep(0.1)
 
 
