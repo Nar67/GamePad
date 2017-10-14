@@ -2,11 +2,45 @@ import launchpad_py
 import time
 import objs
 import random
-import button_thread
+#import button_thread
 from threading import Lock, Thread
 
 def check_if_out_of_bounds(x, y, YMIN, YMAX, XMIN, XMAX):
 	return x > XMAX or x < XMIN or y > YMAX or y < YMIN
+
+class button_thread(Thread):
+
+	def __init__(self, execute_lock):
+		super(button_thread, self).__init__()
+		self.el = execute_lock
+		self.flag = 0
+
+	def stopt(self):
+		self.flag = 1
+
+	def run(self):
+		while not self.flag:
+			ll = []
+
+			self.el.acquire()
+			#ll = self.lh.ButtonStateXY()
+			self.el.release()
+
+			global ycoord
+			ycoord = ycoord + 1
+
+			if(len(ll) != 0):
+				if ll[0] == 0 and ll[1] == 0 and ycoord < YMAX: # up
+					ycoord += 1
+
+				elif ll[0] == 1 and ll[1] == 0 and ycoord > YMIN: #down
+					ycoord -= 1
+
+				elif ll[0] == 2 and ll[1] == 0 and xcoord > XMIN: # izquierda
+					xcoord -= 1
+
+				elif ll[0] == 3 and ll[1] == 0 and xcoord < XMAX: # derecha
+					xcoord += 1
 
 
 #lp = launchpad_py.LaunchpadMk2()
@@ -41,7 +75,7 @@ matrix = [[]]
 
 
 el = Lock()
-thr1 = button_thread.button_thread(el)
+thr1 = button_thread(el)
 thr1.start()
 
 #thr1.stopt()
@@ -88,7 +122,7 @@ while 1:
 		if not check_if_out_of_bounds(coord[0], coord[1], YMIN - dist_marge/2, YMAX + dist_marge/2, XMIN - dist_marge/2, XMAX + dist_marge/2):
 			suplist.append([coord[0], coord[1]])
 	objects = suplist
-	matrix[xcoord + dist_marge][ycoord + dist_marge] = "+"
+	#matrix[xcoord + dist_marge][ycoord + dist_marge] = "+"
 	el.acquire()
 	#lp.LedCtrlXYByCode(xcoord, ycoord, colorpers)
 	el.release()
@@ -109,5 +143,5 @@ while 1:
 		for y in x:
 			stringa += y
 		print stringa
-
+	print "Valor xcoord {} , valor ycoord {}".format(xcoord, ycoord)
 
