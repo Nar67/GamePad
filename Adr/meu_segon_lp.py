@@ -70,9 +70,9 @@ while 1:
 
 	el.acquire()
 	lp.LedCtrlXYByCode(0, 0, 67)
-	lp.LedCtrlXYByCode(0, 1, 67)
-	lp.LedCtrlXYByCode(0, 2, 67)
-	lp.LedCtrlXYByCode(0, 3, 67)
+	lp.LedCtrlXYByCode(1, 0, 67)
+	lp.LedCtrlXYByCode(2, 0, 67)
+	lp.LedCtrlXYByCode(3, 0, 67)
 	el.release()
 
 	suplist = []

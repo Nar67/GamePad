@@ -26,11 +26,11 @@ class button_thread(Thread):
 				if ll[0] == 0 and ll[1] == 0 and ycoord < YMAX: # up
 					ycoord += 1
 
-				elif ll[0] == 0 and ll[1] == 1 and ycoord > YMIN: #down
+				elif ll[0] == 1 and ll[1] == 0 and ycoord > YMIN: #down
 					ycoord -= 1
 
-				elif ll[0] == 0 and ll[1] == 2 and xcoord > XMIN: # izquierda
+				elif ll[0] == 2 and ll[1] == 0 and xcoord > XMIN: # izquierda
 					xcoord -= 1
 
-				elif ll[0] == 0 and ll[1] == 3 and xcoord < XMAX: # derecha
+				elif ll[0] == 3 and ll[1] == 0 and xcoord < XMAX: # derecha
 					xcoord += 1
