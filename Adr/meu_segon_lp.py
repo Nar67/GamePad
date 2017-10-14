@@ -39,10 +39,10 @@ dist_marge = 5
 
 matrix = [[]]
 
-
-el = thread.allocate_lock()
-thr1 = button_thread(lp, el)
+el = Lock()
+thr1 = button_thread.button_thread(lp, el)
 thr1.start()
+
 
 
 while 1:
