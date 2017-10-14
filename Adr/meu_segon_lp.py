@@ -76,8 +76,8 @@ class button_thread(Thread):
 			#print "hola"
 
 			self.el.acquire()
-			if self.check_if_collide():
-				flag_principal = 1
+			#if self.check_if_collide():
+			#	flag_principal = 1
 			self.el.release()
 
 			if(len(ll) != 0):
@@ -159,7 +159,7 @@ class game:
 
 			matrix = [[]]
 
-			ll = lp.ButtonStateXY()
+			ll = self.lp.ButtonStateXY()
 
 			for x in range(self.XMIN - 1 , self.XMAX + self.dist_marge*2 + 1):
 				submat = []
@@ -174,14 +174,14 @@ class game:
 					if x != 8 and y != 0:
 						matrix[x + self.dist_marge][y + self.dist_marge] = "*"
 						self.el.acquire()
-						#lp.LedCtrlXYByCode(x, y, colorfons)
+						self.lp.LedCtrlXYByCode(x, y, colorfons)
 						self.el.release()
 
 			self.el.acquire()
-			lp.LedCtrlXYByCode(0, 0, 67)
-			lp.LedCtrlXYByCode(1, 0, 67)
-			lp.LedCtrlXYByCode(2, 0, 67)
-			lp.LedCtrlXYByCode(3, 0, 67)
+			self.lp.LedCtrlXYByCode(0, 0, 67)
+			self.lp.LedCtrlXYByCode(1, 0, 67)
+			self.lp.LedCtrlXYByCode(2, 0, 67)
+			self.lp.LedCtrlXYByCode(3, 0, 67)
 			self.el.release()
 
 			suplist = []
@@ -192,7 +192,7 @@ class game:
 				if coord[0] != 8 and coord[1] != 0:
 
 					self.el.acquire()
-					lp.LedCtrlXYByCode(coord[0], coord[1], colorobjs)
+					self.lp.LedCtrlXYByCode(coord[0], coord[1], colorobjs)
 					self.el.release()
 
 				coord[0] += self.desplacx
@@ -205,7 +205,7 @@ class game:
 			matrix[self.xcoord + self.dist_marge][self.ycoord + self.dist_marge] = "+"
 
 			self.el.acquire()
-			lp.LedCtrlXYByCode(xcoord, ycoord, colorpers)
+			self.lp.LedCtrlXYByCode(xcoord, ycoord, colorpers)
 			self.el.release()
 
 			
