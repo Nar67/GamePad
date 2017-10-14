@@ -13,10 +13,10 @@ lp = launchpad_py.LaunchpadMk2()
 res = lp.Open()
 lp.Reset()
 
-XMIN = 0
-YMIN = 1
-XMAX = 7
-YMAX = 8
+XMIN = 1
+YMIN = 0
+XMAX = 8
+YMAX = 7
 
 xcoord = 6
 ycoord = 6
@@ -70,7 +70,7 @@ while 1:
 		objects = objects + objs.get_obj_1(random.randint(XMIN, XMAX)*desplacx, random.randint(YMIN, YMAX)*desplacy)
 
 	lp.ButtonFlush()
-	time.sleep(0.1)
+	time.sleep(0.3)
 
 	curr_torn += 1
 
