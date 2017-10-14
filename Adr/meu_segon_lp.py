@@ -272,7 +272,7 @@ class game:
 		self.lp.LedCtrlXYByCode(0, 8, CONS_colorchooser)
 		dificultat = -1
 		while dificultat == -1:
-			ll = self.lh.ButtonStateXY()
+			ll = self.lp.ButtonStateXY()
 			if(len(ll) != 0):
 				if ll[0] == 0 and ll[1] == 0: # up
 					dificultat = 3
@@ -286,7 +286,7 @@ class game:
 				elif ll[0] == 6 and ll[1] == 0: # derecha
 					dificultat = 0
 
-				ll = self.lh.ButtonStateXY()
+				ll = self.lp.ButtonStateXY()
 
 	def start_game(self):
 		
