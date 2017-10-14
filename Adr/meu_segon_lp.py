@@ -192,7 +192,7 @@ class game:
 				if coord[0] != 8 and coord[1] != 0:
 
 					self.el.acquire()
-					self.lp.LedCtrlXYByCode(coord[0], coord[1], colorobjs)
+					self.lp.LedCtrlXYByCode(coord[0], coord[1], self.colorobjs)
 					self.el.release()
 
 				coord[0] += self.desplacx
@@ -205,7 +205,7 @@ class game:
 			matrix[self.xcoord + self.dist_marge][self.ycoord + self.dist_marge] = "+"
 
 			self.el.acquire()
-			self.lp.LedCtrlXYByCode(xcoord, ycoord, colorpers)
+			self.lp.LedCtrlXYByCode(self.xcoord, self.ycoord, self.colorpers)
 			self.el.release()
 
 			
