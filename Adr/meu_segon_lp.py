@@ -64,7 +64,7 @@ class button_thread(Thread):
 		sys.exit()
 
 	def run(self):
-		#signal.signal(signal.SIGINT, self.stop)
+		#signal.signal(signal.SIGINT, self.stop)  l
 		#signal.signal(signal.SIGTERM, self.stop)
 
 		while not self.flag:
