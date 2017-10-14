@@ -54,6 +54,23 @@ CONS_coloreasy = 21
 CONS_colorchooser = 79
 #CONS_matrix = [[]]
 
+CONS_MAX_SPEED_VERYHARD = 0.1
+CONS_MIN_SPEED_VERYHARD = 0.7
+CONS_VAR_SPEED_VERYHARD = 0.3
+
+CONS_MAX_SPEED_HARD = 0.2
+CONS_MIN_SPEED_HARD = 0.9
+CONS_VAR_SPEED_HARD = 0.2
+
+CONS_MAX_SPEED_MIG = 0.3
+CONS_MIN_SPEED_MIG = 1
+CONS_VAR_SPEED_MIG = 0.1
+
+CONS_MAX_SPEED_EASY = 0.5
+CONS_MIN_SPEED_EASY = 1.2
+CONS_VAR_SPEED_EASY = 0.05
+
+
 # ---------------------------------
 
 
@@ -143,25 +160,47 @@ class game:
 
 
 	def reset_variables(self, difficult):
+
 		self.multiply_despl = CONS_multiply_other
 		self.torns_gen = CONS_torns_gen_easy
-		if difficult == 0: #easy
-			self.torns_gen = CONS_torns_gen_easy
-			self.torns_changedir = CONS_torns_changedir_easy
+		self.torns_changedir = CONS_torns_changedir_easy
+		self.max_speed = CONS_MAX_SPEED_EASY
+		self.min_speed = CONS_MIN_SPEED_EASY
+		self.var_speed = CONS_VAR_SPEED_EASY
+		self.act_speed = (CONS_MAX_SPEED_EASY + CONS_MIN_SPEED_EASY)/2
 
-		elif difficult == 1: #mitjana
+		'''if difficult == 0: #easy
+			self.torns_gen = CONS_torns_gen_easy
+			self.torns_changedir = CONS_torns_changedir_easy'''
+
+		if difficult == 1: #mitjana
 			self.torns_gen = CONS_torns_gen_mig
 			self.torns_changedir = CONS_torns_changedir_mig
+			self.max_speed = CONS_MAX_SPEED_MIG
+			self.min_speed = CONS_MIN_SPEED_MIG
+			self.var_speed = CONS_VAR_SPEED_MIG
+			self.act_speed = (CONS_MAX_SPEED_MIG + CONS_MIN_SPEED_MIG)/2
+
 
 		elif difficult == 2: #hard
 			self.torns_gen = CONS_torns_gen_hard
 			self.torns_changedir = CONS_torns_changedir_hard
+			self.max_speed = CONS_MAX_SPEED_HARD
+			self.min_speed = CONS_MIN_SPEED_HARD
+			self.var_speed = CONS_VAR_SPEED_HARD
+			self.act_speed = (CONS_MAX_SPEED_HARD + CONS_MIN_SPEED_HARD)/2
 
 		elif difficult == 3: # veryhard
 			self.torns_gen = CONS_torns_gen_veryhard
-			self.multiply_despl = CONS_multiply_veryhard
+			#self.multiply_despl = CONS_multiply_veryhard
 			self.torns_changedir = CONS_torns_changedir_veryhard
+			self.max_speed = CONS_MAX_SPEED_VERYHARD
+			self.min_speed = CONS_MIN_SPEED_VERYHARD
+			self.var_speed = CONS_VAR_SPEED_VERYHARD
+			self.act_speed = (CONS_MAX_SPEED_VERYHARD + CONS_MIN_SPEED_VERYHARD)/2
 
+
+		self.ascendent = True
 
 		self.XMIN = CONS_XMIN
 		self.YMIN = CONS_YMIN
@@ -242,22 +281,24 @@ class game:
 			self.objects = self.objects + objs.get_obj_3(p[0], p[1], p[2], p[3])
 
 	def change_dirs(self):
-		if random.randint(0, 1) == 0:
-			self.desplacx = random.randint(-1, 1)
-			if self.desplacx == 0:
-				self.desplacy = random.randint(-1, 1)
-				if self.desplacy == 0:
-					self.desplacy = 1
-		else:
-			self.desplacy = random.randint(-1, 1)
-			if self.desplacy == 0:
+		if self.curr_torn%self.torns_changedir == 0:
+			if random.randint(0, 1) == 0:
 				self.desplacx = random.randint(-1, 1)
 				if self.desplacx == 0:
-					self.desplacx = 1
-		self.desplacx *= random.randint(0, 1)*self.multiply_despl
-		self.desplacy *= random.randint(0, 1)*self.multiply_despl
+					self.desplacy = random.randint(-1, 1)
+					if self.desplacy == 0:
+						self.desplacy = 1
+			else:
+				self.desplacy = random.randint(-1, 1)
+				if self.desplacy == 0:
+					self.desplacx = random.randint(-1, 1)
+					if self.desplacx == 0:
+						self.desplacx = 1
+			self.desplacx *= random.randint(0, 1)*self.multiply_despl
+			self.desplacy *= random.randint(0, 1)*self.multiply_despl
 
 	def menu_principal(self):
+		self.lp.Reset()
 		for fila in reversed(range(1, 8)):
 			self.lp.LedCtrlXYByCode(0, fila, CONS_colorveryhard)
 		for fila in reversed(range(3, 8)):
@@ -305,9 +346,9 @@ class game:
 
 			ll = self.lp.ButtonStateXY()
 
-			for x in range(self.XMIN , self.XMAX + self.dist_marge*2):
+			for x in range(0 , self.XMAX + self.XMIN + self.dist_marge*2):
 				submat = []
-				for y in range(self.YMIN, self.YMAX + self.dist_marge*2):
+				for y in range(0, self.YMAX + self.YMIN + self.dist_marge*2):
 					submat.append("X")
 				matrix.append(submat)
 
@@ -365,6 +406,27 @@ class game:
 						self.XMAX + self.dist_marge/2):
 					suplist.append([coord[0], coord[1]])
 
+
+			matt = [[]]
+			for x in range(0 , self.XMAX + self.XMIN + self.dist_marge*2):
+				submat = []
+				for y in range(0, self.YMAX + self.YMIN + self.dist_marge*2):
+					if check_if_out_of_bounds(x + self.dist_marge, y + self.dist_marge,
+						(self.YMAX - self.YMIN) + self.dist_marge/2,
+						(self.YMIN + self.YMAX) + self.dist_marge*2,
+						(self.XMAX - self.XMIN) + self.dist_marge/2,
+						(self.XMAX + self.XMIN) + self.dist_marge*2):
+						submat.append(".") #  si esta fora evalua cert
+					else:
+						submat.append("O")
+				matt.append(submat)
+
+			'''for x in matt:
+				stringa = ""
+				for y in x:
+					stringa += y
+				print stringa'''
+
 			self.objects = suplist
 
 			matrix[self.xcoord + self.dist_marge][self.ycoord + self.dist_marge] = "+"
@@ -376,8 +438,17 @@ class game:
 			self.generate_object()
 			self.change_dirs()
 
-			#lp.ButtonFlush()
-			#time.sleep(0.3)
+			lp.ButtonFlush()
+			if self.ascendent:
+				self.act_speed += self.var_speed
+				if self.act_speed > self.max_speed:
+					self.ascendent = False
+			else:
+				self.act_speed -= self.var_speed
+				if self.act_speed < self.min_speed:
+					self.ascendent = True
+
+			time.sleep(self.act_speed)
 
 			self.curr_torn += 1
 
