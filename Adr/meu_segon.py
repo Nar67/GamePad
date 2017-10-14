@@ -67,9 +67,11 @@ while 1:
 	lp.LedCtrlXYByCode(xcoord, ycoord, colorpers)
 
 	if curr_torn%torns_gen == 0:
-		objects = objects + objs.get_obj_1(random.randint(XMIN, XMAX), random.randint(YMIN, YMAX))
+		objects = objects + objs.get_obj_1(random.randint(XMIN, XMAX)*desplacx, random.randint(YMIN, YMAX)*desplacy)
 
 	lp.ButtonFlush()
 	time.sleep(0.1)
+
+	curr_torn += 1
 
 
