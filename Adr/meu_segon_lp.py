@@ -438,7 +438,7 @@ class game:
 			self.generate_object()
 			self.change_dirs()
 
-			lp.ButtonFlush()
+			#lp.ButtonFlush()
 			if self.ascendent:
 				self.act_speed += self.var_speed
 				if self.act_speed > self.max_speed:
