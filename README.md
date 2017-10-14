@@ -1,2 +1,2 @@
 # GamePad
-A series of game using a Novation Launchpad
+A series of games using a Novation Launchpad
