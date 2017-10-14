@@ -7,10 +7,34 @@ import sys
 #import button_thread
 from threading import Lock, Thread
 
-def check_if_collide(points, pj):
-	for x in points:
-		if x[0] == pj[0] and x[1] == pj[1]:
-			return True
+#----------- CONSTANTS ------------
+CONS_XMIN = 0
+CONS_YMIN = 1
+CONS_XMAX = 7
+CONS_YMAX = 8
+
+CONS_xcoord = 6
+CONS_ycoord = 6
+
+CONS_colorpers = 64
+CONS_colorobjs = 120
+CONS_colorfons = 71
+
+#CONS_objects = []
+
+CONS_desplacx = 1
+CONS_desplacy = 0
+
+CONS_torns_gen = 6
+CONS_curr_torn = 0
+
+CONS_dist_marge = 5
+
+#CONS_matrix = [[]]
+
+# ---------------------------------
+
+
 
 
 def check_if_out_of_bounds(x, y, YMIN, YMAX, XMIN, XMAX):
@@ -18,165 +42,202 @@ def check_if_out_of_bounds(x, y, YMIN, YMAX, XMIN, XMAX):
 
 class button_thread(Thread):
 
-	def __init__(self, execute_lock):
-	#def __init__(self, launchpad, execute_lock):
+	#def __init__(self, execute_lock, xcoord, ycoord, YMIN, YMAX, XMIN, XMAX, check, stop):
+	def __init__(self, launchpad, execute_lock, xcoord, ycoord, YMIN, YMAX, XMIN, XMAX, check, stop):
 		super(button_thread, self).__init__()
 		self.el = execute_lock
-		#self.lh = launchpad
+		self.xcoord = xcoord
+		self.ycoord = ycoord
+		self.YMIN = YMIN
+		self.YMAX = YMAX
+		self.XMIN = XMIN
+		self.XMAX = XMAX
+		self.lh = launchpad
 		self.flag = 0
+		self.check_if_collide = check
+		self.stop = stop
+
 
 	def stopt(self, signum, frame):
 		self.flag = 1
 		sys.exit()
 
 	def run(self):
-		global ycoord
-		global YMAX
-		global xcoord
-		global YMIN
-		global XMIN
-		global XMAX
+		#signal.signal(signal.SIGINT, self.stop)
+		#signal.signal(signal.SIGTERM, self.stop)
+
 		while not self.flag:
 
 			ll = []
 
 			self.el.acquire()
-			#ll = self.lh.ButtonStateXY()
+			ll = self.lh.ButtonStateXY()
+			self.el.release()
+			#print "hola"
+
+			self.el.acquire()
+			if self.check_if_collide():
+				flag_principal = 1
 			self.el.release()
 
-
-
 			if(len(ll) != 0):
-				if ll[0] == 0 and ll[1] == 0 and ycoord > YMIN: # up
+				if ll[0] == 0 and ll[1] == 0 and self.ycoord > self.YMIN: # up
 					self.el.acquire()
-					ycoord -= 1
+					self.ycoord -= 1
 					self.el.release()
 
-				elif ll[0] == 1 and ll[1] == 0 and ycoord < YMAX: #down
+				elif ll[0] == 1 and ll[1] == 0 and self.ycoord < self.YMAX: #down
 					self.el.acquire()
-					ycoord += 1
+					self.ycoord += 1
 					self.el.release()
 
-				elif ll[0] == 2 and ll[1] == 0 and xcoord > XMIN: # izquierda
+				elif ll[0] == 2 and ll[1] == 0 and self.xcoord > self.XMIN: # izquierda
 					self.el.acquire()
-					xcoord -= 1
+					self.xcoord -= 1
 					self.el.release()
 
-				elif ll[0] == 3 and ll[1] == 0 and xcoord < XMAX: # derecha
+				elif ll[0] == 3 and ll[1] == 0 and self.xcoord < self.XMAX: # derecha
 					self.el.acquire()
-					xcoord += 1
+					self.xcoord += 1
 					self.el.release()
 
 
+class game:
+	def __init__(self):
+		self.lp = launchpad_py.LaunchpadMk2()
+		self.res = lp.Open()
+		self.lp.Reset()
+		hol = 1
 
-#lp = launchpad_py.LaunchpadMk2()
+
+	def reset_variables(self):
+		self.XMIN = CONS_XMIN
+		self.YMIN = CONS_YMIN
+		self.XMAX = CONS_XMAX
+		self.YMAX = CONS_YMAX
+
+		self.xcoord = CONS_xcoord
+		self.ycoord = CONS_ycoord
+
+		self.colorpers = CONS_colorpers
+		self.colorobjs = CONS_colorobjs
+		self.colorfons = CONS_colorfons
+
+		self.objects = []
+
+		self.desplacx = CONS_desplacx
+		self.desplacy = CONS_desplacy
+
+		self.torns_gen = CONS_torns_gen
+		self.curr_torn = CONS_curr_torn
+
+		self.dist_marge = CONS_dist_marge
+
+		self.flag_principal = 0
+
+		self.el = Lock()
+		
+	def check_if_collide(self):
+		for x in self.objects:
+			if x[0] == self.xcoord and x[1] == self.ycoord:
+				return True
+
+	def stop_thread(self, signum, frame):
+		self.flag_principal = 1
+		sys.exit()
 
 
-#res = lp.Open()
-#lp.Reset()
+	def start_game(self):
+		
+		thr1 = button_thread(self.lp, self.el, self.xcoord, self.ycoord, self.YMIN, self.YMAX, self.XMIN, self.XMAX, self.check_if_collide, self.stop_thread)
+		thr1.start()
+		signal.signal(signal.SIGINT, thr1.stopt)
+		signal.signal(signal.SIGTERM, thr1.stopt)
 
-XMIN = 0
-YMIN = 1
-XMAX = 7
-YMAX = 8
+		while not self.flag_principal:
+			ll = []
 
-xcoord = 6
-ycoord = 6
+			matrix = [[]]
 
-colorpers = 64
-colorobjs = 120
-colorfons = 71
+			ll = lp.ButtonStateXY()
 
-objects = []
+			for x in range(self.XMIN - 1 , self.XMAX + self.dist_marge*2 + 1):
+				submat = []
+				for y in range(self.YMIN - 1, self.YMAX + self.dist_marge*2 + 1):
+					submat.append("X")
+				matrix.append(submat)
 
-desplacx = 1
-desplacy = 0
+			
 
-torns_gen = 6
-curr_torn = 0
+			for x in range(self.XMIN, self.XMAX + 1):
+				for y in range(self.YMIN, self.YMAX + 1):
+					if x != 8 and y != 0:
+						matrix[x + self.dist_marge][y + self.dist_marge] = "*"
+						self.el.acquire()
+						#lp.LedCtrlXYByCode(x, y, colorfons)
+						self.el.release()
 
-dist_marge = 5
+			self.el.acquire()
+			lp.LedCtrlXYByCode(0, 0, 67)
+			lp.LedCtrlXYByCode(1, 0, 67)
+			lp.LedCtrlXYByCode(2, 0, 67)
+			lp.LedCtrlXYByCode(3, 0, 67)
+			self.el.release()
 
-matrix = [[]]
+			suplist = []
+			for coord in self.objects:
 
-el = Lock()
-#thr1 = button_thread(lp, el)
-thr1 = button_thread(el)
-thr1.start()
+				matrix[coord[0] + self.dist_marge][coord[1] + self.dist_marge] = "."
 
-signal.signal(signal.SIGINT, thr1.stopt)
-signal.signal(signal.SIGTERM, thr1.stopt)
+				if coord[0] != 8 and coord[1] != 0:
+
+					self.el.acquire()
+					lp.LedCtrlXYByCode(coord[0], coord[1], colorobjs)
+					self.el.release()
+
+				coord[0] += self.desplacx
+				coord[1] += self.desplacy
+				if not check_if_out_of_bounds(coord[0], coord[1], self.YMIN - self.dist_marge, self.YMAX + self.dist_marge, self.XMIN - self.dist_marge, self.XMAX + self.dist_marge):
+					suplist.append([coord[0], coord[1]])
+
+			self.objects = suplist
+
+			matrix[self.xcoord + self.dist_marge][self.ycoord + self.dist_marge] = "+"
+
+			self.el.acquire()
+			lp.LedCtrlXYByCode(xcoord, ycoord, colorpers)
+			self.el.release()
+
+			
+
+			if self.curr_torn%self.torns_gen == 0:
+				self.objects = self.objects + objs.get_obj_1(random.randint(self.XMIN - self.dist_marge/2, self.XMAX + self.dist_marge/2)*self.desplacy - self.desplacx*2, random.randint(self.YMIN - self.dist_marge/2, self.YMAX + self.dist_marge/2)*self.desplacx - self.desplacy*2)
+
+			#lp.ButtonFlush()
+			time.sleep(0.1)
+
+			self.curr_torn += 1
+
+			
+			print "-------------------------------"
+
+			for x in matrix:
+				stringa = ""
+				for y in x:
+					stringa += y
+				print stringa
+
+
+
+
+
+
+
+
+
 #signal.signal(signal.CTRL_C_EVENT, thr1.stopt)
 
+g = game()
 while 1:
-	ll = []
-
-	matrix = [[]]
-
-	#ll = lp.ButtonStateXY()
-
-	for x in range(XMIN - 1 , XMAX + dist_marge*2 + 1):
-		submat = []
-		for y in range(YMIN - 1, YMAX + dist_marge*2 + 1):
-			submat.append("X")
-		matrix.append(submat)
-
-	
-
-	for x in range(XMIN, XMAX + 1):
-		for y in range(YMIN, YMAX + 1):
-			if x != 8 and y != 0:
-				matrix[x + dist_marge][y + dist_marge] = "*"
-				el.acquire()
-				#lp.LedCtrlXYByCode(x, y, colorfons)
-				el.release()
-
-	el.acquire()
-	#lp.LedCtrlXYByCode(0, 0, 67)
-	#lp.LedCtrlXYByCode(1, 0, 67)
-	#lp.LedCtrlXYByCode(2, 0, 67)
-	#lp.LedCtrlXYByCode(3, 0, 67)
-	el.release()
-
-	suplist = []
-	for coord in objects:
-
-		matrix[coord[0] + dist_marge][coord[1] + dist_marge] = "."
-
-		if coord[0] != 8 and coord[1] != 0:
-
-			el.acquire()
-			#lp.LedCtrlXYByCode(coord[0], coord[1], colorobjs)
-			el.release()
-
-		coord[0] += desplacx
-		coord[1] += desplacy
-		if not check_if_out_of_bounds(coord[0], coord[1], YMIN - dist_marge, YMAX + dist_marge, XMIN - dist_marge, XMAX + dist_marge):
-			suplist.append([coord[0], coord[1]])
-
-	objects = suplist
-
-	matrix[xcoord + dist_marge][ycoord + dist_marge] = "+"
-
-	el.acquire()
-	#lp.LedCtrlXYByCode(xcoord, ycoord, colorpers)
-	el.release()
-
-	if curr_torn%torns_gen == 0:
-		objects = objects + objs.get_obj_1(random.randint(XMIN - dist_marge/2, XMAX + dist_marge/2)*desplacy - desplacx*2, random.randint(YMIN - dist_marge/2, YMAX + dist_marge/2)*desplacx - desplacy*2)
-
-	#lp.ButtonFlush()
-	time.sleep(0.1)
-
-	curr_torn += 1
-
-	
-	print "-------------------------------"
-
-	for x in matrix:
-		stringa = ""
-		for y in x:
-			stringa += y
-		print stringa
-
-
+	g.reset_variables()
+	g.start_game()
