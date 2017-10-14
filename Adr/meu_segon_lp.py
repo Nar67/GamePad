@@ -174,7 +174,7 @@ class game:
 					if x != 8 and y != 0:
 						matrix[x + self.dist_marge][y + self.dist_marge] = "*"
 						self.el.acquire()
-						self.lp.LedCtrlXYByCode(x, y, colorfons)
+						self.lp.LedCtrlXYByCode(x, y, self.colorfons)
 						self.el.release()
 
 			self.el.acquire()
