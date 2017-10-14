@@ -105,7 +105,7 @@ class button_thread(Thread):
 class game:
 	def __init__(self):
 		self.lp = launchpad_py.LaunchpadMk2()
-		self.res = lp.Open()
+		self.res = self.lp.Open()
 		self.lp.Reset()
 		hol = 1
 
