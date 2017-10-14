@@ -82,25 +82,28 @@ class button_thread(Thread):
 			self.el.release()
 
 			if(len(ll) != 0):
-				if ll[0] == 0 and ll[1] == 0 and self.get_ycoord() > self.YMIN: # up
+				if ll[0] == 0 and ll[1] == 0 and self.gety() > self.YMIN: # up
 					self.el.acquire()
-					self.incrementa_x_y(0, -1)
+					self.incxy(0, -1)
 					self.el.release()
 
-				elif ll[0] == 1 and ll[1] == 0 and self.get_ycoord() < self.YMAX: #down
+				elif ll[0] == 1 and ll[1] == 0 and self.gety() < self.YMAX: #down
 					self.el.acquire()
-					self.incrementa_x_y(0, 1)
+					self.incxy(0, 1)
 					self.el.release()
 
-				elif ll[0] == 2 and ll[1] == 0 and self.get_xcoord() > self.XMIN: # izquierda
+				elif ll[0] == 2 and ll[1] == 0 and self.getx() > self.XMIN: # izquierda
 					self.el.acquire()
-					self.incrementa_x_y(-1, 0)
+					self.incxy(-1, 0)
 					self.el.release()
 
-				elif ll[0] == 3 and ll[1] == 0 and self.get_xcoord() < self.XMAX: # derecha
+				elif ll[0] == 3 and ll[1] == 0 and self.getx() < self.XMAX: # derecha
 					self.el.acquire()
-					self.incrementa_x_y(1, 0)
+					self.incxy(1, 0)
 					self.el.release()
+
+			#self.incxy(1, 0)
+			#time.sleep(0.5)
 
 
 class game:
@@ -108,6 +111,7 @@ class game:
 		self.lp = launchpad_py.LaunchpadMk2()
 		self.res = self.lp.Open()
 		self.lp.Reset()
+		#self.lp = None
 		hol = 1
 
 
@@ -220,8 +224,12 @@ class game:
 
 			
 
-			if self.curr_torn%self.torns_gen == 0:
+			if self.curr_torn%self.torns_gen == self.torns_gen/3:
 				self.objects = self.objects + objs.get_obj_1(random.randint(self.XMIN - self.dist_marge/2, self.XMAX + self.dist_marge/2)*self.desplacy - self.desplacx*2, random.randint(self.YMIN - self.dist_marge/2, self.YMAX + self.dist_marge/2)*self.desplacx - self.desplacy*2)
+			elif self.curr_torn%self.torns_gen == self.torns_gen/3*2:
+				self.objects = self.objects + objs.get_obj_2(random.randint(self.XMIN - self.dist_marge/2, self.XMAX + self.dist_marge/2)*self.desplacy - self.desplacx*2, random.randint(self.YMIN - self.dist_marge/2, self.YMAX + self.dist_marge/2)*self.desplacx - self.desplacy*2)
+			elif self.curr_torn%self.torns_gen == 0:
+				self.objects = self.objects + objs.get_obj_3(random.randint(self.XMIN - self.dist_marge/2, self.XMAX + self.dist_marge/2)*self.desplacy - self.desplacx*2, random.randint(self.YMIN - self.dist_marge/2, self.YMAX + self.dist_marge/2)*self.desplacx - self.desplacy*2)
 
 			#lp.ButtonFlush()
 			time.sleep(0.1)
@@ -236,6 +244,8 @@ class game:
 				for y in x:
 					stringa += y
 				print stringa
+
+			print("Variable x {}".format(self.xcoord))
 
 
 
