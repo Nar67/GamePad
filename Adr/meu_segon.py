@@ -7,11 +7,11 @@ def check_if_out_of_bounds(x, y, YMIN, YMAX, XMIN, XMAX):
 	return x > XMAX or x < XMIN or y > YMAX or y < YMIN
 
 
-lp = launchpad_py.LaunchpadMk2()
+#lp = launchpad_py.LaunchpadMk2()
 
 
-res = lp.Open()
-lp.Reset()
+#res = lp.Open()
+#lp.Reset()
 
 XMIN = 0
 YMIN = 1
@@ -33,10 +33,18 @@ desplacy = 1
 torns_gen = 6
 curr_torn = 0
 
-dist_marge = 20
+dist_marge = 6
+
+matrix = [[]]
+
+'''for x in range(XMIN - dist_marge, XMAX + dist_marge):
+	submat = []
+	for y in range(YMIN - dist_marge, YMAX + dist_marge):
+		submat.append()'''
 
 while 1:
 	ll = []
+
 	ll = lp.ButtonStateXY()
 
 	if(len(ll) != 0):
@@ -52,8 +60,8 @@ while 1:
 		elif ll[0] == 0 and ll[1] == 3 and xcoord < XMAX: # derecha
 			xcoord += 1
 
-	for x in range(XMIN, XMAX):
-		for y in range(YMIN, YMAX):
+	for x in range(XMIN - 1, XMAX + 1):
+		for y in range(YMIN - 1, YMAX + 1):
 			lp.LedCtrlXYByCode(x, y, colorfons)
 
 	suplist = []
@@ -69,7 +77,7 @@ while 1:
 	if curr_torn%torns_gen == 0:
 		objects = objects + objs.get_obj_1(random.randint(XMIN, XMAX)*desplacx, random.randint(YMIN, YMAX)*desplacy)
 
-	#lp.ButtonFlush()
+	lp.ButtonFlush()
 	time.sleep(0.3)
 
 	curr_torn += 1
