@@ -7,13 +7,14 @@ from input_listener import InputListener
 from colors import ColorMapper
 from midi import MidiSender
 
-def main():
-    try:
-        pad = launchpad.LaunchpadMk2()
-        pad.Open()
-        pad.Reset()
-    except:
-        pad = None
+def main(pad=None):
+    if not pad:
+        try:
+            pad = launchpad.LaunchpadMk2()
+            pad.Open()
+            pad.Reset()
+        except Exception as e:
+            pad = None
     try:
         color_mapper = ColorMapper()
         pad_mapper = PadMapper(pad, color_mapper, use_pad=bool(pad))
@@ -49,4 +50,5 @@ def main():
             pad.Reset()
             pad.Close()
 
-main()
+if __name__ == "__main__":
+    main()
