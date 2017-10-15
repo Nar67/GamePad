@@ -145,31 +145,33 @@ def printer(b,listA,listB):
 
 #MAIN
 lp = launchpad_py.LaunchpadMk2()
-res = lp.Open()
+def main():
+    res = lp.Open()
 
-while True:
-    lp.Reset()
+    while True:
+        lp.Reset()
 
-    printer(False,U_plr1,D_plr1)
-    printer(True,U_plr2,D_plr2)
+        printer(False,U_plr1,D_plr1)
+        printer(True,U_plr2,D_plr2)
 
-    pr = threading.Thread(target=buttCtrl)
-    pr.start()
+        pr = threading.Thread(target=buttCtrl)
+        pr.start()
 
-    while B1_Alive and B2_Alive:
-        lp.LedCtrlXYByCode(pos_b1[0], pos_b1[1], BLUE)
-        lp.LedCtrlXYByCode(pos_b2[0], pos_b2[1], PURPL)
-        maparize()
+        while B1_Alive and B2_Alive:
+            lp.LedCtrlXYByCode(pos_b1[0], pos_b1[1], BLUE)
+            lp.LedCtrlXYByCode(pos_b2[0], pos_b2[1], PURPL)
+            maparize()
 
-        time.sleep(sleep)
-        steep()
-        death()
+            time.sleep(sleep)
+            steep()
+            death()
 
-    Winner()
+        Winner()
 
-    while not len(lp.ButtonStateXY()):
-        lp.ButtonStateXY()
+        while not len(lp.ButtonStateXY()):
+            lp.ButtonStateXY()
 
-    Reset()
+        Reset()
 
-#END MAIN
+if __name__ == "__main__":
+    main()

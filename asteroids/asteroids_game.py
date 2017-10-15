@@ -466,17 +466,14 @@ class game:
 
 
 
+def main():
+	g = game()
+	while 1:
+		dif = 2
+		dif = g.menu_principal()
+		g.reset_variables(dif)
+		g.start_game()
 
-
-
-
-
-#signal.signal(signal.CTRL_C_EVENT, thr1.stopt)
-
-g = game()
-while 1:
-	dif = 2
-	dif = g.menu_principal()
-	g.reset_variables(dif)
-	g.start_game()
+if __name__ == "__main__":
+    main()
 

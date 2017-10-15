@@ -114,40 +114,38 @@ class Sequence(object):
 
 
 
-
-lp = launchpad_py.LaunchpadMk2()
-res = lp.Open()
-lp.Reset()
-
-try:
-
-    board = Board(lp)
-    board.initBoard()
-    sequence = Sequence(lp)
-    rounds = 0
-    while board.isAlive():
-        coord = SequenceCoords.generateCoord()
-        sequence.addCoords(coord)
-        sequence.displaySequence()
-        board.displayTurnTransition()
-        success = sequence.checkUserSequence()
-        if success:
-            board.displaySuccessTransition()
-        else:
-            board.decreaseHp()
-            board.displayFailureTransition()
-        rounds += 1 
-        print("*** ROUND %s FINISHED ***" % rounds)
-
-
-
-except KeyboardInterrupt as ki:
-    print("Exit game...")
-finally:
+def main():
+    lp = launchpad_py.LaunchpadMk2()
+    res = lp.Open()
     lp.Reset()
-    lp.Close()
+
+    try:
+
+        board = Board(lp)
+        board.initBoard()
+        sequence = Sequence(lp)
+        rounds = 0
+        while board.isAlive():
+            coord = SequenceCoords.generateCoord()
+            sequence.addCoords(coord)
+            sequence.displaySequence()
+            board.displayTurnTransition()
+            success = sequence.checkUserSequence()
+            if success:
+                board.displaySuccessTransition()
+            else:
+                board.decreaseHp()
+                board.displayFailureTransition()
+            rounds += 1 
+            print("*** ROUND %s FINISHED ***" % rounds)
 
 
 
+    except KeyboardInterrupt as ki:
+        print("Exit game...")
+    finally:
+        lp.Reset()
+        lp.Close()
 
-
+if __name__ == "__main__":
+    main()
